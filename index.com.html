@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Umar's Romantic Gift</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #ffd6e8, #add8e6, #fffacd);
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .container {
+      background: linear-gradient(to right, #ffe6f2, #d0f0ff, #fffccc);
+      border-radius: 25px;
+      padding: 30px;
+      max-width: 600px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      display: none;
+    }
+
+    .visible {
+      display: block;
+    }
+
+    h1, h2, p {
+      color: #cc0066;
+      text-shadow: 1px 1px 2px #fff;
+    }
+
+    button {
+      background: linear-gradient(to right, #ff69b4, #87cefa, #fff799);
+      border: none;
+      padding: 12px 25px;
+      font-size: 18px;
+      border-radius: 25px;
+      color: white;
+      cursor: pointer;
+      margin: 10px 5px;
+      transition: transform 0.3s ease;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+    }
+
+    .gift-btn {
+      background: url('https://uploads.onecompiler.io/43quzm4uc/43quwqx2k/giftbox.png') no-repeat center center;
+      background-size: contain;
+      width: 120px;
+      height: 120px;
+      border: none;
+      cursor: pointer;
+      animation: glow 2s infinite ease-in-out;
+    }
+
+    @keyframes glow {
+      0%, 100% { filter: drop-shadow(0 0 5px pink); }
+      50% { filter: drop-shadow(0 0 15px deeppink); }
+    }
+
+    .heart, .butterfly {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      opacity: 0.7;
+    }
+
+    .heart {
+      background-image: url('https://uploads.onecompiler.io/43quzm4uc/43quwqx2k/love.png');
+      animation: float 10s infinite linear;
+    }
+
+    .heart:nth-child(1) { top: 100%; left: 20%; animation-delay: 0s; }
+    .heart:nth-child(2) { top: 100%; left: 70%; animation-delay: 3s; }
+
+    @keyframes float {
+      0% { transform: translateY(0) scale(1); opacity: 0; }
+      30% { opacity: 0.7; }
+      100% { transform: translateY(-120vh) scale(1.2); opacity: 0; }
+    }
+
+    .butterfly {
+      background-image: url('https://uploads.onecompiler.io/43quzm4uc/43quwqx2k/smile.png');
+      animation: fly 15s linear infinite;
+    }
+
+    @keyframes fly {
+      0% { top: 20%; left: -10%; transform: rotate(0deg); }
+      50% { top: 30%; left: 110%; transform: rotate(180deg); }
+      100% { top: 20%; left: -10%; transform: rotate(360deg); }
+    }
+
+    .typing {
+      border-right: 2px solid #cc0066;
+      white-space: nowrap;
+      overflow: hidden;
+      animation: typing 3s steps(40, end), blink .75s step-end infinite;
+    }
+
+    @keyframes typing {
+      from { width: 0 }
+      to { width: 100% }
+    }
+
+    @keyframes blink {
+      from, to { border-color: transparent }
+      50% { border-color: #cc0066; }
+    }
+  </style>
+</head>
+<body>
+
+  <audio autoplay loop>
+    <source src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_4123bf6c80.mp3?filename=romantic-14205.mp3" type="audio/mp3" type="audio/mp3">
+  </audio>
+
+  <!-- Floating elements -->
+  <div class="heart"></div>
+  <div class="heart"></div>
+  <div class="butterfly"></div>
+
+  <!-- Gift button -->
+  <button class="gift-btn" onclick="openGift()"></button>
+
+  <!-- Name input -->
+  <div class="container" id="nameInputContainer">
+    <h1>🎁 What's your name?</h1>
+    <input type="text" id="username" placeholder="Enter your name" style="padding:10px; font-size:16px; border-radius:10px;">
+    <br>
+    <button onclick="startSteps()">Continue</button>
+  </div>
+
+  <!-- Step container -->
+  <div class="container" id="stepContainer">
+    <h2 id="stepText" class="typing"></h2>
+    <p id="stepDesc"></p>
+    <button id="nextBtn" onclick="nextStep()">Next</button>
+  </div>
+
+  <!-- Question -->
+  <div class="container" id="questionContainer">
+    <h1>💖 Will you be mine forever?</h1>
+    <button onclick="sayYes()">Yes 💕</button>
+    <button onclick="sayNo()">No 😢</button>
+  </div>
+
+  <!-- Final message -->
+  <div class="container" id="secretContainer">
+    <h1>💗 I will be yours forever, <span id="finalName"></span> 💗</h1>
+    <p>Umar loves you deeply and truly, always. 💕</p>
+  </div>
+
+  <!-- Whisper -->
+  <div class="container" id="whisperContainer">
+    <p>If WhatsApp didn't open, just know Umar meant every word ❤️</p>
+  </div>
+
+  <script>
+    let username = "";
+    let currentStep = 0;
+
+    const steps = [
+      { title: "Hey there Beautiful 💫", desc: "This isn't just a page... it's Umar's heart speaking." },
+      { title: "Every smile of yours 🌸", desc: "Is like sunshine that lights up my soul." },
+      { title: "When I saw you the first time 💕", desc: "My heart whispered... 'She's the one.'" },
+      { title: "Since then...", desc: "I’ve imagined our story together every single day." },
+      { title: "I’ve waited...", desc: "For the right moment to tell you how I feel 💖" },
+      { title: "That moment is now", desc: "Please read the next part carefully 💌" }
+    ];
+
+    function openGift() {
+      document.querySelector('.gift-btn').style.display = 'none';
+      document.getElementById('nameInputContainer').classList.add('visible');
+    }
+
+    function startSteps() {
+      username = document.getElementById('username').value.trim();
+      if (!username) {
+        alert("Please enter your name 🥹");
+        return;
+      }
+      document.getElementById('nameInputContainer').classList.remove('visible');
+      showStep();
+    }
+
+    function showStep() {
+      const step = steps[currentStep];
+      const textElement = document.getElementById('stepText');
+      const descElement = document.getElementById('stepDesc');
+
+      textElement.classList.remove('typing');
+      void textElement.offsetWidth; // reset animation
+      textElement.classList.add('typing');
+
+      textElement.textContent = step.title;
+      descElement.textContent = step.desc;
+
+      document.getElementById('stepContainer').classList.add('visible');
+    }
+
+    function nextStep() {
+      currentStep++;
+      if (currentStep < steps.length) {
+        showStep();
+      } else {
+        document.getElementById('stepContainer').classList.remove('visible');
+        document.getElementById('questionContainer').classList.add('visible');
+      }
+    }
+
+    function sayYes() {
+      document.getElementById('questionContainer').classList.remove('visible');
+      document.getElementById('secretContainer').classList.add('visible');
+      document.getElementById('finalName').textContent = username;
+
+      setTimeout(() => {
+        window.location.href = "https://wa.me/923317776381?text=" +
+          encodeURIComponent("I will be yours forever, Umar. I love you too ❤️");
+
+        setTimeout(() => {
+          document.getElementById('whisperContainer').classList.add('visible');
+        }, 4000);
+
+      }, 3000);
+    }
+
+    function sayNo() {
+      // No action — stays silent
+    }
+  </script>
+</body>
+</html>
